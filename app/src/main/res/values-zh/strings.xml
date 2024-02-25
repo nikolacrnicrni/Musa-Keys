@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">設置</string>
+    <string name="agent_app">电脑软件</string>
+    <string name="app_name">Musa Keys</string>
+    <string name="available_musa_fonts">可用的目卅字体</string>
+    <string name="background_service_stopped">背景服务已停止</string>
+    <string name="cant_find_font_file">= 找不到字体文件：</string>
+    <string name="choose_font_size">选择字体大小</string>
+    <string name="choose_language">选择语言</string>
+    <string name="clear_message">清除信息？</string>
+    <string name="close">关闭ं</string>
+    <string name="connect">连接</string>
+    <string name="connected">已连接</string>
+    <string name="connecting_to_agent">正连接软件</string>
+    <string name="date">24feb23</string>
+    <string name="disconnected">连接中断</string>
+    <string name="do_not_show_again">请不要再显示</string>
+    <string name="error">错误</string>
+    <string name="explanation_text">使用下面的按鈕安裝字體或從 Musa 網站更新它們</string>
+    <string name="fonts">字體</string>
+    <string name="got_it">明白了</string>
+    <string name="install">安裝</string>
+    <string name="instructions_menu_item">帮助</string>
+    <string name="large">大</string>
+    <string name="medium">中</string>
+    <string name="menu_gallery">畫廊</string>
+    <string name="menu_home">家</string>
+    <string name="menu_send">發送</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_slideshow">幻燈片</string>
+    <string name="menu_tools">工具</string>
+    <string name="musa_help_tab_1"> 目卅键盘软件是一个在你计算机上运行的小程序。透过无线上网连接至你手机上的目卅键盘应用程序。连接后，程序会聆听你的文字输入，然后插入键盘缓冲区。你的正常键盘会如常运作。 目卅键盘软件在未连接状态时亦可作虚拟键盘使用，你可以轻触屏幕来输入目卅字母。 你可从www.musa.edu/musakeys.htm下载及安装目卅键盘软件。安装过程中，你须要允许连接无线上网及键盘缓冲区的权限。 </string>
+    <string name="musa_help_tab_2">首次使用软件时，你会看到一个密码。在手机上的目卅键盘应用程序中输入此密码。程序会记住此密码。如有更改，只需输入新的密码即可。你亦可输入密码TESTMODE在未有连接状态下试用程序。 如无法连接，请确定你的计算机及手机均连接至同一无线上网 – 这是导至此问题的最常见原因。</string>
+    <string name="musa_help_tab_3"> 连接后，你可以正常使用目卅键盘。你可到www.musa.edu/keyboard.htm浏览有关目卅键盘的使用方法。 如你将手机旋转至横向模式，你会看到一个双键盘供双手操作。你只需要旋转手机方向来切换模式 </string>
+    <string name="musa_help_tab_4">目卅键盘应用程序还可让你在其他手机应用程序如WhatsApp, Telegram, Messenger 等输入目卅文字。即使应用程序中没有目卅字体，你都能阅读收到的目卅文字。 要操作两者, 我们会使用手机的剪贴簿。首先，开启目卅键盘应用程序，然后选择「加入目卅至剪贴簿」。应用程序会进入后台模式，待你开启正常键盘后旋转手机方向。 如想发送目卅文字的信息，你可以开启信息应用程序及正常键盘。然后将手机旋转至横向模式：目卅键盘会出现让您输入目卅文字。 如果您想混合使用目卅文字与正常文字，你只需随意旋转手机方向即可。完成后，点击右上角的对勾：键盘会回到后台，而你的信息会出现在剪贴簿中。 你只需将其粘贴到您的信息应用程序中即可。 你可透过同样的方式来阅读收取到的目卅文字息。复制信息后旋转电话方向，你会看到正确显示的信息</string>
+    <string name="musa_keys">目卅键盘</string>
+    <string name="musa_mobile_menu_item">加入目卅至剪贴簿</string>
+    <string name="nav_header_desc">導航標題</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="navigation_drawer_close">關閉導航抽屜</string>
+    <string name="navigation_drawer_open">打開導航抽屜</string>
+    <string name="password">密码</string>
+    <string name="provide_password">软件密码是什么？</string>
+    <string name="remote_connection_menu_item">发送目卅至电脑</string>
+    <string name="select_and_copy">选取及复制目卅文字，然后旋转你的手机至横向模式</string>
+    <string name="settings_menu_item">设定</string>
+    <string name="small">小</string>
+    <string name="turn_it_back_upright">转回纵向模式来切换至正键盘</string>
+    <string name="update_all_musa_fonts">/更新所有 Musa 字體</string>
+    <string name="use_app_with_computer">在计算机上使用应用程序</string>
+    <string name="use_app_with_phone">在手机上使用应用程序</string>
+</resources>

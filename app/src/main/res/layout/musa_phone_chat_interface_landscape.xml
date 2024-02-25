@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:orientation="vertical" android:background="@color/colorPrimary" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1.5">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="4">
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/recycler_view" android:scrollbars="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="10dp"/>
+        </LinearLayout>
+        <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <EditText android:textSize="18sp" android:textStyle="bold" android:textColor="@color/blueDark" android:id="@+id/shwa_reply" android:background="@drawable/custom_white_black_button" android:padding="10dp" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:layout_marginRight="10dp" android:layout_marginBottom="10dp" android:layout_weight="1"/>
+            <ImageView android:id="@+id/done" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="20dp" android:layout_marginBottom="10dp" android:src="@drawable/send_arrow"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

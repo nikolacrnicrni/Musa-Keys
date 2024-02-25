@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_passkey_fragment"
+            android:icon="@drawable/wifi"
+            android:title="@string/remote_connection_menu_item" />
+        <item
+            android:id="@+id/nav_musa_phone_portrait_mode"
+            android:icon="@drawable/mobile"
+            android:title="@string/musa_mobile_menu_item" />
+        <item
+            android:id="@+id/nav_musa_settings"
+            android:icon="@drawable/settings"
+            android:title="@string/settings_menu_item" />
+        <item
+            android:id="@+id/nav_instructions"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/instructions_menu_item" />
+        <item
+            android:id="@+id/nav_fonts"
+            android:icon="@drawable/ic_baseline_font_download_24"
+            android:title="@string/fonts" />
+        <item
+            android:id="@+id/nav_close"
+            android:icon="@drawable/close"
+            android:title="@string/close" />
+    </group>
+</menu>

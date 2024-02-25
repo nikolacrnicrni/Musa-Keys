@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/sms_container"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#c0c0c0"
+        android:orientation="horizontal"
+        android:weightSum="9">
+
+        <ImageView
+            android:id="@+id/roman_keyboard_on"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_keyboard_button_shape"
+            android:padding="8dp"
+            android:src="@drawable/ic_keyboard"
+            app:tint="@color/grey" />
+
+        <ImageView
+            android:id="@+id/sms_label"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_keyboard_button_shape"
+            android:padding="9dp"
+            android:src="@drawable/ic_sms"
+            app:tint="@color/grey" />
+
+        <ImageView
+            android:id="@+id/roman_keyboard"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_keyboard_button_shape"
+            android:padding="8dp"
+            android:src="@drawable/ic_keyboard"
+            android:visibility="gone"
+            app:tint="@color/grey" />
+
+        <EditText
+            android:id="@+id/key_output"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
+            android:layout_weight="6"
+            android:background="@drawable/custom_keyboard_button_shape"
+            android:paddingStart="10dp"
+            android:scrollbars="vertical" />
+
+        <LinearLayout
+            android:id="@+id/backspace_cover"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/custom_keyboard_button_shape"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/backspace"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/backspace"
+                app:tint="@color/grey" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/parent_17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/login_screen_buttons"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/up_arrow" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recycler_container"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/keyboard_size"
+        android:layout_weight="8"
+        android:background="#c0c0c0"
+        android:orientation="vertical"
+        android:padding="1dp"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="9">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:weightSum="7">
+
+                        <Button
+                            android:id="@+id/parent_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#ff80aa"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#ffaa80"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#ffff80"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_4"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#80ffaa"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_5"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#80ffaa"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_6"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#80ffff"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_7"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#989797"
+                            android:textColor="#000000" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:weightSum="7">
+
+                        <Button
+                            android:id="@+id/parent_10"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#800000"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_11"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#805500"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_12"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#558000"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_13"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#008000"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_14"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#008055"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_15"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#005580"
+                            android:textColor="#ffffff" />
+
+                        <Button
+                            android:id="@+id/parent_16"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#000000"
+                            android:textColor="#ffffff" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:weightSum="2">
+
+                    <Button
+                        android:id="@+id/parent_8"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/custom_keyboard_button_shape"
+                        android:backgroundTint="#808080"
+                        android:textColor="#000000" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/parent_9"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#808080"
+                            android:textColor="#000000" />
+
+                        <Button
+                            android:id="@+id/parent_18"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_keyboard_button_shape"
+                            android:backgroundTint="#808080"
+                            android:textColor="#000000" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:weightSum="9">
+
+            <Button
+                android:id="@+id/parent_19"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#ffffff" />
+
+            <Button
+                android:id="@+id/parent_20"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#80aaff" />
+
+            <Button
+                android:id="@+id/parent_21"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#ff80ff" />
+
+            <Button
+                android:id="@+id/parent_22"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#aa80ff" />
+
+            <Button
+                android:id="@+id/parent_23"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#000080"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/parent_24"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#800055"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/parent_25"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#550080"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/parent_26"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#404040"
+                android:textColor="#ffffff" />
+
+            <Button
+                android:id="@+id/parent_27"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_keyboard_button_shape"
+                android:backgroundTint="#808080"
+                android:textColor="#000000" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/login_screen_buttons"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/shift"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/login_screen_buttons"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/up_arrow" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/enter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/login_screen_buttons"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/enter" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

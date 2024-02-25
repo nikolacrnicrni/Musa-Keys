@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_passkey_fragment">
+    <fragment
+        android:id="@+id/nav_tools"
+        android:name="com.musa.musakeys.ui.tools.ToolsFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_passkey_fragment"
+        android:name="com.musa.musakeys.ui.musa_remote.PassKeyFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_musa_remote_portrait_keypad"
+        android:name="com.musa.musakeys.ui.musa_remote.PortraitModeKeypad"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_musa_remote_landscape_keypad"
+        android:name="com.musa.musakeys.ui.musa_remote.LandscapeModeKeypad"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_musa_phone_landscape_mode"
+        android:name="com.musa.musakeys.ui.musa_phone.MusaPhoneChatInterfaceLandscape"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_musa_phone_portrait_mode"
+        android:name="com.musa.musakeys.ui.musa_phone.MusaPhoneChatInterfacePortrait"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_musa_settings"
+        android:name="com.musa.musakeys.ui.settings.SettingsFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_instructions"
+        android:name="com.musa.musakeys.ui.help.HelpFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/nav_fonts"
+        android:name="com.musa.musakeys.ui.font_fragment.FontsFragment"
+        android:label="fragment_fonts" />
+    <fragment
+        android:id="@+id/nav_close"
+        android:name="com.musa.musakeys.ui.close.CloseFragment"
+        android:label="@string/app_name" />
+</navigation>

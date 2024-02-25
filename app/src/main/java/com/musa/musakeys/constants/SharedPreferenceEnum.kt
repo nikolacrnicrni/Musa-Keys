@@ -1,0 +1,6 @@
+package com.musa.musakeys.constants
+
+
+enum class SharedPreferenceEnum {
+    MUSA_SHARED_PREFERENCE, PASS_KEY_SAVED, IS_TEST_MODE, FONT_SAVED, LANGUAGE_SAVED, ENABLE_BACKGROUND_SERVICE, CLIPBOARD_POPUP_NO_SHOW
+}
