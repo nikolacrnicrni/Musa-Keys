@@ -1,6 +1,5 @@
 package com.musa.musakeys.ui.musa_remote
 
-
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.InputFilter
@@ -21,20 +20,19 @@ import com.musa.musakeys.utility.SharedPreferenceHelperUtil.updateSharedPreferen
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil.updateSharedPreferenceString
 import java.util.Locale
 
-
 class PassKeyFragment : Fragment() {
     override fun onCreateView(
         layoutInflater: LayoutInflater,
         viewGroup: ViewGroup?,
         bundle: Bundle?
-    ): View? {
+    ): View {
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         val inflate: View = layoutInflater.inflate(R.layout.fragment_passkey, viewGroup, false)
         val sharedPreferenceString = getSharedPreferenceString(
             requireActivity(), SharedPreferenceEnum.PASS_KEY_SAVED, null as String?
         )
         if (sharedPreferenceString != null) {
-            updateSharedPreferenceBoolean(
+            updateShffghhfffffaredPreferenceBoolean(
                 requireActivity(),
                 SharedPreferenceEnum.IS_TEST_MODE,
                 false

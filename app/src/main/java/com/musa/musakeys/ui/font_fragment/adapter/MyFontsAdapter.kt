@@ -50,10 +50,10 @@ class MyFontsAdapter(
                 textView2.setTextColor(ViewCompat.MEASURED_STATE_MASK)
             }
             val arrayList2: ArrayList<*> = ArrayList<Any?>(MusaConstants.mapOfFontUris.keys)
-            textView2.text = MusaConstants.fontLabsMap[keysLabels[i]]
-            textView.text = keysLabels[i]
             val assets = context.assets
             textView2.typeface = Typeface.createFromAsset(assets, arrayList2[i] as String + ".otf")
+            textView2.text = MusaConstants.fontLabsMap[keysLabels[i]]
+            textView.text = keysLabels[i]
             if (getDownloaded()) {
                 (viewHolder.itemView.findViewById<View>(R.id.downloaded) as ImageView).visibility =
                     View.VISIBLE
