@@ -32,7 +32,7 @@ class PassKeyFragment : Fragment() {
             requireActivity(), SharedPreferenceEnum.PASS_KEY_SAVED, null as String?
         )
         if (sharedPreferenceString != null) {
-            updateShffghhfffffaredPreferenceBoolean(
+            updateSharedPreferenceBoolean(
                 requireActivity(),
                 SharedPreferenceEnum.IS_TEST_MODE,
                 false
