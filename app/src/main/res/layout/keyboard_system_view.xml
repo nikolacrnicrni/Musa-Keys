@@ -208,14 +208,14 @@
                             android:textColor="#000000" />
 
                         <Button
-                            android:id="@+id/parent_7"
+                            android:id="@+id/parent_19"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="1dp"
                             android:layout_weight="1"
                             android:background="@drawable/custom_keyboard_button_shape"
-                            android:backgroundTint="#989797"
-                            android:textColor="#000000" />
+                            android:backgroundTint="#ffffff" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -349,13 +349,14 @@
             android:weightSum="9">
 
             <Button
-                android:id="@+id/parent_19"
+                android:id="@+id/parent_7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/custom_keyboard_button_shape"
-                android:backgroundTint="#ffffff" />
+                android:backgroundTint="#989797"
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/parent_20"

@@ -183,7 +183,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     private fun handleShift() {
         isShiftMode = !isShiftMode
         updateViews(
-            if (isShiftMode) FormulaUtils.getShiftedParentKeys(parentKeysFont) else FormulaUtils.getParentKeyboard(
+            if (isShiftMode) getShiftedParentKeys(parentKeysFont) else getParentKeyboard(
                 parentKeysFont
             )
         )
@@ -217,7 +217,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
         dushanFont = FontSelector.getAppropriateFont(applicationContext)!!
         parentKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
         childKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
-        buttonList = ArrayList<Button>()
+        buttonList = ArrayList()
         val button = view.findViewById<View>(R.id.parent_14) as Button
         val button2 = view.findViewById<View>(R.id.parent_15) as Button
         val button3 = view.findViewById<View>(R.id.parent_16) as Button
@@ -258,7 +258,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
         smsLabel.setOnClickListener(this)
         romanKeyboardOn.setOnClickListener(this)
         romanKeyboard.setOnClickListener(this)
-        keyOutput!!.setTypeface(dushanFont)
+        keyOutput!!.typeface = dushanFont
         keyOutput!!.textSize = FontSizeManager.getFontSize(baseContext).toFloat()
         keyOutput!!.text = textFromLandscapeMode
         backspaceCover.setOnClickListener(this)
@@ -332,7 +332,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
             }
         }
         val z2 = z || isShiftMode
-        t = FormulaUtils.getSingleKeyboardButtonIds()!!.indexOf(Integer.valueOf(view.id))
+        t = FormulaUtils.getSingleKeyboardButtonIds().indexOf(Integer.valueOf(view.id))
         if (z2 && t == 9) {
             updateViews(FormulaUtils.getNumericKeysParent(parentKeysFont))
             isNumericMode = true
@@ -440,13 +440,13 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     private fun processSecondClick(view: View, z: Boolean) {
         var str: String
         val str2: String
-        var indexOf = FormulaUtils.getSingleKeyboardButtonIds()!!.indexOf(Integer.valueOf(view.id))
+        var indexOf = FormulaUtils.getSingleKeyboardButtonIds().indexOf(Integer.valueOf(view.id))
         if (z || isShiftMode) {
             indexOf += 27
         }
         val actualText = FormulaUtils.getOutput(t, indexOf)!!.actualText
-        if (yauLongPressed && FormulaUtils.getSingleKeyboardButtonIds()!!
-                .indexOf(Integer.valueOf(view.id)) != 15 || addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()!!
+        if (yauLongPressed && FormulaUtils.getSingleKeyboardButtonIds()
+                .indexOf(Integer.valueOf(view.id)) != 15 || addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) == 17
         ) {
             str2 = Html.fromHtml("&#x200C;").toString()
@@ -752,7 +752,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                         return
                     }
 
-                    R.id.parent_19 -> {
+                    R.id.parent_7 -> {
                         updateViews(FormulaUtils.getNumericCharacters(parentKeysFont))
                         numericWithin22 = true
                         isFirstClick = true

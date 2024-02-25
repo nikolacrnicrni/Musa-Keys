@@ -1,10 +1,9 @@
 package com.musa.musakeys.utility
 
-import com.musa.musakeys.R
 import android.graphics.Typeface
 import android.text.Html
-import android.util.Log
 import com.google.common.collect.Lists
+import com.musa.musakeys.R
 import com.musa.musakeys.model.MusaTextMetadata
 
 object FormulaUtils {
@@ -20,8 +19,8 @@ object FormulaUtils {
     val highDigitsMusa = listOf("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
     private val keyshape = listOf(0xE011, 0xE012, 0xE013, 0xE014, 0xE015, 0xE016, 0xE010, 0xE001, 0xE002,
-        0xE00E, 0xE00D, 0xE00C, 0xE00B, 0xE00A, 0xE009, 0xE00F, 0xE001, 0xE003,
-        0xE01A, 0xE017, 0xE019, 0xE018, 0xE008, 0xE006, 0xE007, 0xE005, 0xE004)
+                                0xE00E, 0xE00D, 0xE00C, 0xE00B, 0xE00A, 0xE009, 0xE00F, 0xE001, 0xE003,
+                                0xE01A, 0xE017, 0xE019, 0xE018, 0xE008, 0xE006, 0xE007, 0xE005, 0xE004)
 
     private val numericHighDigits = listOf(57440, 57409, 57410, 57411, 57408, 57488, 57568, 57544, 57520, 57592, 57472, 57576, 57552, 57528, 57512, 57432, 57584, 57560, 57536, 57600, 57504, 57409, 57410, 57411, 57408, 57488, 57488, 57472, 57496, 57592, 57472, 57472, 57464, 57488, 57448, 57456, 57480, 57456, 57480, 57424)
     private val numericKeysParent = listOf(57363, 57348, 57351, 11027, 57345, 57377, 57401, 57396, 57387, 57406, 57370, 57402, 57397, 57392, 57385, 57360, 57403, 57398, 57393, 57357, 57384, 9099, 8677, 8629, 9141, 57377, 57377, 57370, 57382, 57406, 57370, 57370, 57368, 57377, 57364, 57366, 57375, 57366, 57375, 57357)
@@ -274,7 +273,7 @@ object FormulaUtils {
         0xE2FF
     )
 
-    fun getNumericKeysParent(typeface: Typeface): List<MusaTextMetadata?>? {
+    fun getNumericKeysParent(typeface: Typeface): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..26) {
             val builder = MusaTextMetadata.builder()
@@ -290,7 +289,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getNumericLowDigits(): List<MusaTextMetadata?>? {
+    fun getNumericLowDigits(): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..53) {
             val builder = MusaTextMetadata.builder()
@@ -302,7 +301,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getNumericHighDigits(): List<MusaTextMetadata?>? {
+    fun getNumericHighDigits(): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..53) {
             val builder = MusaTextMetadata.builder()
@@ -314,7 +313,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getShiftedParentKeys(typeface: Typeface): List<MusaTextMetadata?>? {
+    fun getShiftedParentKeys(typeface: Typeface): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..26) {
             val builder = MusaTextMetadata.builder()
@@ -359,7 +358,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getNumericCharacters(typeface: Typeface): List<MusaTextMetadata?>? {
+    fun getNumericCharacters(typeface: Typeface): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..26) {
             if (i != 26) {
@@ -381,7 +380,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getParentKeyboard(typeface: Typeface): List<MusaTextMetadata?>? {
+    fun getParentKeyboard(typeface: Typeface): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i in 0..26) {
             val builder = MusaTextMetadata.builder()
@@ -394,7 +393,7 @@ object FormulaUtils {
         return newArrayList
     }
 
-    fun getChildKeysForTopParent(i: Int, typeface: Typeface): List<MusaTextMetadata?>? {
+    fun getChildKeysForTopParent(i: Int, typeface: Typeface): List<MusaTextMetadata?> {
        val newArrayList: ArrayList<MusaTextMetadata> = Lists.newArrayList<MusaTextMetadata>()
         for (i2 in 0..26) {
             val codePoint = getCodePoint(i, i2)
@@ -678,7 +677,7 @@ object FormulaUtils {
         }
     }
 
-    fun getSingleKeyboardButtonIds(): List<Int?>? {
+    fun getSingleKeyboardButtonIds(): List<Int?> {
         val arrayList: ArrayList<Int?> = ArrayList()
         arrayList.add(Integer.valueOf(R.id.parent_1))
         arrayList.add(Integer.valueOf(R.id.parent_2))

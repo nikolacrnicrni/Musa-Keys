@@ -1,10 +1,7 @@
 package com.musa.musakeys.services
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
@@ -54,22 +51,10 @@ class OrientationListenerRegistrationService : Service() {
     }
 
     private fun getNotificationBuilder(channelId: String): NotificationCompat.Builder {
-        prepareChannel(channelId, NotificationManager.IMPORTANCE_DEFAULT)
         return NotificationCompat.Builder(this, channelId)
     }
 
-    private fun prepareChannel(channelId: String, importance: Int) {
-        val appName = getString(R.string.app_name)
-        val description = "Channel Description"
 
-        val channel = NotificationChannel(channelId, appName, importance).apply {
-            this.description = description
-            setShowBadge(false)
-        }
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
 
     private fun getDefaultPendingIntent(): PendingIntent {
         val intent = Intent(this, WelcomeMusaActivity::class.java)
