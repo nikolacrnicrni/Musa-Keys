@@ -1,6 +1,5 @@
 package com.musa.musakeys.ui.musa_remote
 
-
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -30,7 +29,6 @@ import com.musa.musakeys.remoteConnection.NetworkCommunicationAsync
 import com.musa.musakeys.utility.FontSelector.getAppropriateFont
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil.getSharedPreferenceBoolean
 
-
 class LandscapeModeKeypad : Fragment(), View.OnClickListener,
     OnLongClickListener {
     private var backSpaceOrResetImageView: ImageView? = null
@@ -38,26 +36,13 @@ class LandscapeModeKeypad : Fragment(), View.OnClickListener,
     private var childKeysFont: Typeface? = null
     private var dushanFont: Typeface? = null
     private var enter: LinearLayout? = null
-    private val isLeftPressed = false
-    private val isNumericLowDigitMode = true
-    private val isNumericMode = false
-    private val isRighPressed = false
-    private val isShiftMode = false
-    private val isSubkeyboardDrawn = false
     private var isTestMode = false
     private val leftParentButtons: ArrayList<Button?> = ArrayList<Button?>(20)
-    private val logoLandscape: ImageView? = null
-    private val longYauPressed = false
     private var outputText: TextView? = null
     private var parentKeysFont: Typeface? = null
-    private val pressedButtonId = -1
-    private val pressedButtonWasLongPressed = false
     private val rightParentButtons: ArrayList<Button?> = ArrayList<Button?>(20)
     private var shift: LinearLayout? = null
     private var textFromPortraitMode = ""
-    private val yauPrefixSuffix = Html.fromHtml("&#x200C;").toString()
-    private fun showSubkeysOnLeft() {}
-    private fun showSubkeysOnRight() {}
 
     private var _binding: FragmentLandscapeModeBinding? = null
     private val binding get() = _binding!!
@@ -67,7 +52,11 @@ class LandscapeModeKeypad : Fragment(), View.OnClickListener,
         return true
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         switchToPortraitModeIfNecessary()

@@ -28,6 +28,7 @@ import com.musa.musakeys.asyncTasks.AsyncResult
 import com.musa.musakeys.asyncTasks.DeleteEntityAsyncTask
 import com.musa.musakeys.asyncTasks.EntityPersistenceListener
 import com.musa.musakeys.asyncTasks.InsertEntityAsyncTask
+import com.musa.musakeys.constants.MusaConstants
 import com.musa.musakeys.constants.SharedPreferenceEnum
 import com.musa.musakeys.db.InstantiateDatabase
 import com.musa.musakeys.db.PersistablePreviousMessage
@@ -42,6 +43,7 @@ import com.musa.musakeys.utility.FontSizeManager
 import com.musa.musakeys.utility.FormulaUtils
 import com.musa.musakeys.utility.FormulaUtils.getParentKeyboard
 import com.musa.musakeys.utility.FormulaUtils.getShiftedParentKeys
+import com.musa.musakeys.utility.MySharedPreference
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil
 
 
@@ -89,10 +91,13 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     private var t = 0
     private var textFromLandscapeMode = ""
     private var yauLongPressed = false
+    private var isHentrax = false
+    private val mySharedPreference = MySharedPreference(this)
 
     override fun onCreate() {
         super.onCreate()
         checkComputerIconPos()
+
     }
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
@@ -380,9 +385,9 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 t += 27
             }
             str = if (isNumericLowDigitMode) {
-                FormulaUtils.getNumericLowDigits()!![t]!!.actualText
+                FormulaUtils.getNumericLowDigits()[t]!!.actualText
             } else {
-                FormulaUtils.getNumericHighDigits()!![t]!!.actualText
+                FormulaUtils.getNumericHighDigits()[t]!!.actualText
             }
             keyOutput?.text = (keyOutput!!.text.toString() + str)
             if (isShiftMode) {
@@ -391,7 +396,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
             }
         } else {
             if (isShiftMode) {
-                if (FormulaUtils.getSingleKeyboardButtonIds()!!
+                if (FormulaUtils.getSingleKeyboardButtonIds()
                         .indexOf(Integer.valueOf(view.id)) == 19
                 ) {
                     addZWNJ = true
@@ -422,7 +427,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 updateViews(getShiftedParentKeys(parentKeysFont))
                 shiftMode22 = true
             } else {
-                updateViews(FormulaUtils.getChildKeysForTopParent(i4, childKeysFont))
+                updateViews(FormulaUtils.getChildKeysForTopParent(i4, childKeysFont, isHentrax))
             }
             isFirstClick = false
             isShiftMode = false
@@ -432,19 +437,20 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                     R.drawable.restart
                 )
             )
-            yauLongPressed = !(!z2 || FormulaUtils.getSingleKeyboardButtonIds()!!
+            yauLongPressed = !(!z2 || FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) != 19)
         }
     }
 
     private fun processSecondClick(view: View, z: Boolean) {
+        isHentrax = mySharedPreference.getPreferences(MusaConstants.SAVED_FONT).equals("HentraxMusaElement-Regular")
         var str: String
         val str2: String
         var indexOf = FormulaUtils.getSingleKeyboardButtonIds().indexOf(Integer.valueOf(view.id))
         if (z || isShiftMode) {
             indexOf += 27
         }
-        val actualText = FormulaUtils.getOutput(t, indexOf)!!.actualText
+        val actualText = FormulaUtils.getOutput(t, indexOf, isHentrax).actualText
         if (yauLongPressed && FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) != 15 || addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) == 17
@@ -453,7 +459,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
             yauLongPressed = false
             addZWNJ = false
             str = ""
-        } else if (!yauLongPressed || FormulaUtils.getSingleKeyboardButtonIds()!!
+        } else if (!yauLongPressed || FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) != 15
         ) {
             str2 = ""
@@ -465,7 +471,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
             str = obj
             str2 = ""
         }
-        if (addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()!!
+        if (addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()
                 .indexOf(Integer.valueOf(view.id)) == 15
         ) {
             str = Html.fromHtml("&#x200C;").toString()
@@ -576,8 +582,8 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
         if (numericWithin22) {
             if (computerIconPos) {
                 var i = 0
-                while (i < FormulaUtils.getSingleKeyboardButtonIds()!!.size) {
-                    if (FormulaUtils.getSingleKeyboardButtonIds()!![i] != view.id) {
+                while (i < FormulaUtils.getSingleKeyboardButtonIds().size) {
+                    if (FormulaUtils.getSingleKeyboardButtonIds()[i] != view.id) {
                         i++
                     } else if (i == 8) {
                         buttonList[8].text = "⬒"
@@ -633,11 +639,12 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 )
                 shiftMode22 = false
             } else {
-                for (i2 in FormulaUtils.getSingleKeyboardButtonIds()!!.indices) {
-                    if (FormulaUtils.getSingleKeyboardButtonIds()!![i2] == view.id) {
+                for (i2 in FormulaUtils.getSingleKeyboardButtonIds().indices) {
+                    if (FormulaUtils.getSingleKeyboardButtonIds()[i2] == view.id) {
                         val childKeysForTopParent = FormulaUtils.getChildKeysForTopParent(
                             7,
-                            childKeysFont
+                            childKeysFont,
+                            isHentrax
                         )
                         val textView2 = keyOutput!!
                         textView2.text =
