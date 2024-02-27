@@ -112,7 +112,7 @@ class MusaPhoneChatInterfacePortrait : Fragment(), View.OnClickListener {
                     storeData(obj)
                     insertMessage(obj, false)
                 } else {
-                    MusaServiceUtility.startBackgroundServiceAsRequired(requireActivity())
+                    startBackgroundServiceAsRequired(requireActivity())
                     mAdapter.refreshData()
                 }
                 scrollToBottom()
@@ -153,7 +153,7 @@ class MusaPhoneChatInterfacePortrait : Fragment(), View.OnClickListener {
 
                     },
                     it.messageDao()
-                ).execute(arrayOfNulls<Void>(0))
+                ).execute(arrayOfNulls(0))
             }
         }
     }
