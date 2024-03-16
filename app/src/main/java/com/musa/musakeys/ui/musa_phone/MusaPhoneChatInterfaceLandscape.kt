@@ -164,7 +164,7 @@ class MusaPhoneChatInterfaceLandscape : Fragment(), View.OnClickListener {
                 ) {
                     startBackgroundServiceAsRequired(requireActivity())
                     shwaReply?.setText("")
-                    KeyboardListener.clearKeyboard()
+                    KeyboardListener.getInstance()?.clearKeyboard()
                     mAdapter?.addData(persistablePreviousMessage)
                 }
 

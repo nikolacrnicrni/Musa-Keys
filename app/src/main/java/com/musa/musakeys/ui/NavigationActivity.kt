@@ -32,6 +32,8 @@ class NavigationActivity : AppCompatActivity() {
             setupDrawerLayout()
             handleIntentExtras()
             appBarMain.hamburger.setOnClickListener { toggleDrawer() }
+            appBarMain.musaTitle.setOnClickListener { finish() }
+            appBarMain.drawerFlag.setOnClickListener { finish() }
         }
     }
 
@@ -40,7 +42,6 @@ class NavigationActivity : AppCompatActivity() {
             R.id.nav_passkey_fragment,
             R.id.nav_musa_remote_landscape_keypad,
             R.id.nav_musa_settings,
-            R.id.nav_tools,
             R.id.nav_instructions,
             R.id.nav_fonts,
             R.id.nav_close
@@ -103,5 +104,6 @@ class NavigationActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         KeyboardListener().deleteAll(this)
+        KeyboardListener.getInstance()?.clearKeyboard()
     }
 }

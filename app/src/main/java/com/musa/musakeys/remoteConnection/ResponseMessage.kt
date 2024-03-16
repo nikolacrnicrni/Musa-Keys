@@ -3,7 +3,6 @@ package com.musa.musakeys.remoteConnection
 import com.musa.musakeys.constants.MusaConstants
 import kotlin.math.absoluteValue
 
-
 class ResponseMessage {
     var connectionError: String? = null
     var connectionResponse: String? = null

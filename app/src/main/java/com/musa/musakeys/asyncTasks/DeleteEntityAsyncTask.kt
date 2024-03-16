@@ -38,7 +38,7 @@ class DeleteEntityAsyncTask(
         if (progressDialog2 != null && progressDialog2.isShowing) {
             try {
                 progressDialog!!.dismiss()
-            } catch (unused: Exception) {
+            } catch (_: Exception) {
             }
         }
     }

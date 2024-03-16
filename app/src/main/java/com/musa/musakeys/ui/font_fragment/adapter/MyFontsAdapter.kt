@@ -19,8 +19,8 @@ class MyFontsAdapter(
     private val context: Context,
     private val fontMap: LinkedHashMap<String?, String?>,
     private val mClickListener: ItemClickListener
-) :
-    RecyclerView.Adapter<MyFontsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<MyFontsAdapter.ViewHolder>() {
+
     private val keysLabels = ArrayList(MusaConstants.fontLabsMap.keys)
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private var mySharedPreference: MySharedPreference? = null
@@ -69,19 +69,15 @@ class MyFontsAdapter(
         textView: TextView?,
         textView2: TextView?
     ) {
-        val isFontDownloaded =
-            mySharedPreference?.getPreferences(MusaConstants.FONTS_DOWNLOADED) == "true"
-        if (isFontDownloaded) {
-            val fontName = fontMap.keys.elementAt(position)
-            mySharedPreference?.setPreferences(MusaConstants.FONT_INDEX, position.toString())
-            if (fontName != null) {
-                mySharedPreference?.setPreferences(MusaConstants.SAVED_FONT, fontName)
-            }
-            notifyDataSetChanged()
-            mClickListener.onItemClick(textView, textView2, position)
-        } else {
-            Toast.makeText(context, "Please install first", Toast.LENGTH_SHORT).show()
+
+        val fontName = fontMap.keys.elementAt(position)
+        mySharedPreference?.setPreferences(MusaConstants.FONT_INDEX, position.toString())
+        if (fontName != null) {
+            mySharedPreference?.setPreferences(MusaConstants.SAVED_FONT, fontName)
         }
+        notifyDataSetChanged()
+        mClickListener.onItemClick(textView, textView2, position)
+
     }
 
     override fun getItemCount(): Int {

@@ -6,7 +6,7 @@ enum class AsciiChars(val index: Int, val unicode: String) {
 
     companion object {
         fun getAsciiCharForIndex(i: Int): AsciiChars? {
-            for (asciiChars in listOf(*values())) {
+            for (asciiChars in entries) {
                 if (asciiChars.index == i) {
                     return asciiChars
                 }

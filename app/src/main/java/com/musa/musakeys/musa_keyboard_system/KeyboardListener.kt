@@ -16,13 +16,9 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.musa.musakeys.R
 import com.musa.musakeys.asyncTasks.AsyncResult
 import com.musa.musakeys.asyncTasks.DeleteEntityAsyncTask
@@ -30,6 +26,7 @@ import com.musa.musakeys.asyncTasks.EntityPersistenceListener
 import com.musa.musakeys.asyncTasks.InsertEntityAsyncTask
 import com.musa.musakeys.constants.MusaConstants
 import com.musa.musakeys.constants.SharedPreferenceEnum
+import com.musa.musakeys.databinding.KeyboardSystemViewBinding
 import com.musa.musakeys.db.InstantiateDatabase
 import com.musa.musakeys.db.PersistablePreviousMessage
 import com.musa.musakeys.db.PreviousMessagesAdapter
@@ -46,32 +43,34 @@ import com.musa.musakeys.utility.FormulaUtils.getShiftedParentKeys
 import com.musa.musakeys.utility.MySharedPreference
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil
 
-
 class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLongClickListener,
-    TextWatcher {
+    TextWatcher, KeyboardActions {
+
     companion object {
         var IsTabHit = false
         var backspaceHit = false
         var ic: InputConnection? = null
         var isEnterHit = false
         var isEscapeHit = false
-        private var keyOutput: TextView? = null
 
-        fun clearKeyboard() {
-            keyOutput?.text = ""
+
+        @Volatile
+        private var instance: KeyboardListener? = null
+
+        fun getInstance(): KeyboardListener? = instance
+
+        fun setInstance(instance: KeyboardListener?) {
+            this.instance = instance
         }
     }
 
-    private var GONE = false
+    private lateinit var binding: KeyboardSystemViewBinding
+
+    private var smsGone = false
     private var addZWNJ = false
-    private lateinit var backspace: ImageView
-    private lateinit var backspaceCover: LinearLayout
     private lateinit var buttonList: List<Button>
     private lateinit var childKeysFont: Typeface
     private var computerIconPos = false
-    private lateinit var container: LinearLayout
-    private lateinit var dushanFont: Typeface
-    private lateinit var enterKey: LinearLayout
     private var isFirstClick = true
     private var isNumericLowDigitMode = true
     private var isNumericMode = false
@@ -81,23 +80,16 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     private lateinit var mLayoutManager: LinearLayoutManager
     private var numericWithin22 = false
     private lateinit var parentKeysFont: Typeface
-    private lateinit var recycleContainer: LinearLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var romanKeyboard: ImageView
-    private lateinit var romanKeyboardOn: ImageView
-    private lateinit var shiftKey: LinearLayout
     private var shiftMode22 = false
-    private lateinit var smsLabel: ImageView
     private var t = 0
-    private var textFromLandscapeMode = ""
     private var yauLongPressed = false
     private var isHentrax = false
     private val mySharedPreference = MySharedPreference(this)
 
     override fun onCreate() {
         super.onCreate()
+        setInstance(this)
         checkComputerIconPos()
-
     }
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
@@ -106,22 +98,24 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     }
 
     override fun onCreateInputView(): View {
-        val inflate = layoutInflater.inflate(R.layout.keyboard_system_view, null)
+        binding = KeyboardSystemViewBinding.inflate(layoutInflater)
+
         isTestMode = SharedPreferenceHelperUtil.getSharedPreferenceBoolean(
             applicationContext,
             SharedPreferenceEnum.IS_TEST_MODE,
             false
         )
-        initView(inflate)
-        keyOutput?.addTextChangedListener(this)
+
+        initView()
+
+        binding.keyOutput.addTextChangedListener(this)
         updateViews(getParentKeyboard(parentKeysFont))
-        Handler(Looper.getMainLooper()).postDelayed({
-            lambdaOnCreateInputView0()
-        }, 0)
-        return inflate
+        saveCopiedTextClipboard()
+
+        return binding.root
     }
 
-    private fun lambdaOnCreateInputView0() {
+    private fun saveCopiedTextClipboard() {
         (applicationContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager).primaryClip?.let { clip ->
             if (clip.description.hasMimeType("text/html") || clip.description.hasMimeType("text/plain")) {
                 saveCopiedText(clip.getItemAt(0).text.toString())
@@ -132,11 +126,11 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     override fun onClick(view: View) {
         ic = currentInputConnection
         when (view.id) {
-            R.id.backspace_cover -> handleBackspace()
-            R.id.enter -> handleEnter()
-            R.id.roman_keyboard, R.id.roman_keyboard_on -> (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
-            R.id.shift -> handleShift()
-            R.id.sms_label -> toggleSmsLabel()
+            binding.backspaceCover.id -> handleBackspace()
+            binding.enter.id -> handleEnter()
+            binding.romanKeyboard.id, R.id.roman_keyboard_on -> (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+//            binding.shift.id -> handleShift()
+            binding.smsLabel.id -> toggleSmsLabel()
             else -> otherKeyboards(view)
         }
     }
@@ -148,156 +142,117 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     }
 
     private fun handleBackspace() {
-        backspaceHit = true
-        if (isFirstClick) {
-            val charSequence = keyOutput!!.text.toString()
-            if (charSequence.isNotEmpty()) {
-                keyOutput!!.text = charSequence.substring(0, charSequence.length - 1)
-            }
-            backspaceHit = false
-        } else {
+        binding.keyOutput.setText(binding.keyOutput.text.dropLast(1))
+
+        // Reset states only if it was not the first click
+        if (!isFirstClick) {
             shiftMode22 = false
             isFirstClick = true
-            backspaceHit = false
-            updateViews(getParentKeyboard(parentKeysFont))
-            backspace.setImageDrawable(
-                ContextCompat.getDrawable(
-                    applicationContext,
-                    R.drawable.backspace
-                )
-            )
+            updateKeyboardUI()
         }
-        val textBeforeCursor = currentInputConnection.getTextBeforeCursor(100, 1)
-        if (keyOutput!!.text.toString() == "" && textBeforeCursor.toString() != "") {
-            if (TextUtils.isEmpty(currentInputConnection.getSelectedText(0))) {
-                currentInputConnection.deleteSurroundingText(1, 0)
-                return
-            } else {
-                currentInputConnection.commitText("", 1)
-                return
-            }
-        } else {
-            return
+
+        if (binding.keyOutput.text.isEmpty()) {
+            handleInputConnectionDeletion()
         }
     }
 
-    private fun handleEnter() {
-        keyOutput?.append("⏎")
-    }
-
-    private fun handleShift() {
-        isShiftMode = !isShiftMode
-        updateViews(
-            if (isShiftMode) getShiftedParentKeys(parentKeysFont) else getParentKeyboard(
-                parentKeysFont
+    private fun updateKeyboardUI() {
+        updateViews(getParentKeyboard(parentKeysFont))
+        binding.backspace.setImageDrawable(
+            ContextCompat.getDrawable(
+                applicationContext,
+                R.drawable.backspace
             )
         )
     }
 
+    private fun handleInputConnectionDeletion() {
+        val textBeforeCursor = currentInputConnection?.getTextBeforeCursor(100, 0) ?: ""
+        if (textBeforeCursor.isNotEmpty()) {
+            val hasSelectedText = !TextUtils.isEmpty(currentInputConnection?.getSelectedText(0))
+            if (hasSelectedText) {
+                currentInputConnection?.commitText("", 1)
+            } else {
+                currentInputConnection?.deleteSurroundingText(1, 0)
+            }
+        }
+    }
+
+    private fun handleEnter() {
+        binding.keyOutput.append("⏎")
+    }
+
+//    private fun handleShift() {
+//        isShiftMode = !isShiftMode
+//        updateViews(
+//            if (isShiftMode) getShiftedParentKeys(i4, parentKeysFont) else getParentKeyboard(
+//                parentKeysFont
+//            )
+//        )
+//    }
+
     private fun toggleSmsLabel() {
-        GONE = !GONE
-        if (GONE) {
-            romanKeyboardOn.visibility = View.GONE
-            container.visibility = View.GONE
-            recycleContainer.visibility = View.VISIBLE
-            keyOutput?.isEnabled = false
-            backspaceCover.visibility = View.GONE
-            keyOutput?.visibility = View.GONE
-            romanKeyboard.visibility = View.GONE
-            smsLabel.setImageResource(R.drawable.ic_musa_keyboard)
+        smsGone = !smsGone
+        if (smsGone) {
+            binding.romanKeyboardOn.visibility = View.GONE
+            binding.container.visibility = View.GONE
+            binding.recyclerContainer.visibility = View.VISIBLE
+            binding.keyOutput.isEnabled = false
+            binding.backspaceCover.visibility = View.GONE
+            binding.keyOutput.visibility = View.GONE
+            binding.romanKeyboard.visibility = View.GONE
+            binding.smsLabel.setImageResource(R.drawable.ic_musa_keyboard)
         } else {
-            recycleContainer.visibility = View.GONE
-            container.visibility = View.VISIBLE
-            backspaceCover.visibility = View.VISIBLE
-            keyOutput?.visibility = View.VISIBLE
-            romanKeyboardOn.visibility = View.VISIBLE
-            keyOutput?.isEnabled = true
-            romanKeyboard.visibility = View.GONE
-            smsLabel.setImageResource(R.drawable.ic_sms)
+            binding.recyclerContainer.visibility = View.GONE
+            binding.container.visibility = View.VISIBLE
+            binding.backspaceCover.visibility = View.VISIBLE
+            binding.keyOutput.visibility = View.VISIBLE
+            binding.romanKeyboardOn.visibility = View.VISIBLE
+            binding.keyOutput.isEnabled = true
+            binding.romanKeyboard.visibility = View.GONE
+            binding.smsLabel.setImageResource(R.drawable.ic_sms)
         }
         checkComputerIconPos()
     }
 
-    private fun initView(view: View) {
-        dushanFont = FontSelector.getAppropriateFont(applicationContext)!!
+    private fun initView() {
         parentKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
         childKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
         buttonList = ArrayList()
-        val button = view.findViewById<View>(R.id.parent_14) as Button
-        val button2 = view.findViewById<View>(R.id.parent_15) as Button
-        val button3 = view.findViewById<View>(R.id.parent_16) as Button
-        val button4 = view.findViewById<View>(R.id.parent_17) as Button
-        val button5 = view.findViewById<View>(R.id.parent_18) as Button
-        val button6 = view.findViewById<View>(R.id.parent_7) as Button
-        val button7 = view.findViewById<View>(R.id.parent_20) as Button
-        val button8 = view.findViewById<View>(R.id.parent_21) as Button
-        val button9 = view.findViewById<View>(R.id.parent_22) as Button
-        val button10 = view.findViewById<View>(R.id.parent_23) as Button
-        val button11 = view.findViewById<View>(R.id.parent_24) as Button
-        val button12 = view.findViewById<View>(R.id.parent_25) as Button
-        val button13 = view.findViewById<View>(R.id.parent_26) as Button
-        val button14 = view.findViewById<View>(R.id.parent_27) as Button
-        backspace =
-            (view.findViewById<View>(R.id.backspace) as ImageView)
-        backspaceCover =
-            (view.findViewById<View>(R.id.backspace_cover) as LinearLayout)
-        keyOutput = view.findViewById<View>(R.id.key_output) as TextView
-        smsLabel =
-            view.findViewById<View>(R.id.sms_label) as ImageView
-        romanKeyboard =
-            view.findViewById<View>(R.id.roman_keyboard) as ImageView
-        romanKeyboardOn =
-            view.findViewById<View>(R.id.roman_keyboard_on) as ImageView
-        enterKey = (view.findViewById<View>(R.id.enter) as LinearLayout)
-        shiftKey = (view.findViewById<View>(R.id.shift) as LinearLayout)
-        container = (view.findViewById<View>(R.id.container) as LinearLayout)
-        recycleContainer =
-            view.findViewById<View>(R.id.recycler_container) as LinearLayout
-        recyclerView = (view.findViewById<View>(R.id.recycler_view) as RecyclerView)
+
+        val buttons = listOf(
+            binding.parent1, binding.parent2, binding.parent3, binding.parent4,
+            binding.parent5, binding.parent6, binding.parent7, binding.parent8,
+            binding.parent9, binding.parent10, binding.parent11, binding.parent12,
+            binding.parent13, binding.parent14, binding.parent15, binding.parent16,
+            binding.parent17, binding.parent18, binding.parent19, binding.parent20,
+            binding.parent21, binding.parent22, binding.parent23, binding.parent24,
+            binding.parent25, binding.parent26, binding.parent27
+        ).also { buttonList = it }
+
+        // Set LayoutManager and Adapter for RecyclerView
         mLayoutManager = LinearLayoutManager(applicationContext)
-        recyclerView.layoutManager = mLayoutManager
+        binding.recyclerView.layoutManager = mLayoutManager
         mAdapter = PreviousMessagesAdapter(applicationContext)
-        recyclerView.adapter = mAdapter
-        enterKey.setOnClickListener(this)
-        shiftKey.setOnClickListener(this)
-        smsLabel.setOnClickListener(this)
-        romanKeyboardOn.setOnClickListener(this)
-        romanKeyboard.setOnClickListener(this)
-        keyOutput!!.typeface = dushanFont
-        keyOutput!!.textSize = FontSizeManager.getFontSize(baseContext).toFloat()
-        keyOutput!!.text = textFromLandscapeMode
-        backspaceCover.setOnClickListener(this)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_1) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_2) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_3) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_4) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_5) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_6) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_19) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_8) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_9) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_10) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_11) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_12) as Button)
-        (buttonList as ArrayList<Button>).add(view.findViewById<View>(R.id.parent_13) as Button)
-        (buttonList as ArrayList<Button>).add(button)
-        (buttonList as ArrayList<Button>).add(button2)
-        (buttonList as ArrayList<Button>).add(button3)
-        (buttonList as ArrayList<Button>).add(button4)
-        (buttonList as ArrayList<Button>).add(button5)
-        (buttonList as ArrayList<Button>).add(button6)
-        (buttonList as ArrayList<Button>).add(button7)
-        (buttonList as ArrayList<Button>).add(button8)
-        (buttonList as ArrayList<Button>).add(button9)
-        (buttonList as ArrayList<Button>).add(button10)
-        (buttonList as ArrayList<Button>).add(button11)
-        (buttonList as ArrayList<Button>).add(button12)
-        (buttonList as ArrayList<Button>).add(button13)
-        (buttonList as ArrayList<Button>).add(button14)
-        for (next in buttonList) {
-            next.typeface = parentKeysFont
-            next.setOnClickListener(this)
-            next.setOnLongClickListener(this)
+        binding.recyclerView.adapter = mAdapter
+
+        // Setting typeface and other properties for keyOutput TextView
+        binding.keyOutput.typeface = FontSelector.getAppropriateFont(applicationContext)
+        binding.keyOutput.textSize = FontSizeManager.getFontSize(baseContext).toFloat()
+        binding.keyOutput.setText("")
+
+        // Setting click and long click listeners
+        binding.enter.setOnClickListener(this)
+        binding.shift.setOnClickListener(this)
+        binding.smsLabel.setOnClickListener(this)
+        binding.romanKeyboardOn.setOnClickListener(this)
+        binding.romanKeyboard.setOnClickListener(this)
+        binding.backspaceCover.setOnClickListener(this)
+
+        buttons.forEach { button ->
+            button.typeface = parentKeysFont
+            button.setOnClickListener(this)
+            button.setOnLongClickListener(this)
         }
     }
 
@@ -315,23 +270,23 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
         val str: String?
         if (z) {
             when (view.id) {
-                R.id.parent_1 -> {
-                    keyOutput?.text = (keyOutput!!.text.toString() + "⎋")
+                binding.parent1.id -> {
+                    binding.keyOutput.setText(binding.keyOutput.text.toString() + "⎋")
                     return
                 }
 
-                R.id.parent_2 -> {
-                    keyOutput?.text = (keyOutput!!.text.toString() + "⇥")
+                binding.parent2.id -> {
+                    binding.keyOutput.setText(binding.keyOutput.text.toString() + "⇥")
                     return
                 }
 
-                R.id.parent_3 -> {
-                    keyOutput?.text = (keyOutput!!.text.toString() + "↵")
+                binding.parent3.id -> {
+                    binding.keyOutput.setText(binding.keyOutput.text.toString() + "↵")
                     return
                 }
 
-                R.id.parent_4 -> {
-                    keyOutput?.text = (keyOutput!!.text.toString() + " ")
+                binding.parent4.id -> {
+                    binding.keyOutput.setText(binding.keyOutput.text.toString() + " ")
                     return
                 }
             }
@@ -389,7 +344,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
             } else {
                 FormulaUtils.getNumericHighDigits()[t]!!.actualText
             }
-            keyOutput?.text = (keyOutput!!.text.toString() + str)
+            binding.keyOutput.setText(binding.keyOutput.text.toString() + str)
             if (isShiftMode) {
                 isShiftMode = false
                 updateViews(FormulaUtils.getNumericKeysParent(parentKeysFont))
@@ -406,9 +361,9 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                     val unicode = asciiCharForIndex.unicode
                     isFirstClick = true
                     isShiftMode = false
-                    keyOutput?.text = keyOutput!!.text.toString() + unicode
+                    binding.keyOutput.setText(binding.keyOutput.text.toString() + unicode)
                     updateViews(getParentKeyboard(parentKeysFont))
-                    backspace.setImageDrawable(
+                    binding.backspace.setImageDrawable(
                         ContextCompat.getDrawable(
                             applicationContext,
                             R.drawable.backspace
@@ -422,16 +377,14 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 i3 += 27
             }
             t = i3
-            val i4 = t
-            if (i4 == 22) {
-                updateViews(getShiftedParentKeys(parentKeysFont))
-                shiftMode22 = true
-            } else {
-                updateViews(FormulaUtils.getChildKeysForTopParent(i4, childKeysFont, isHentrax))
-            }
+
+            isHentrax =
+                mySharedPreference.getPreferences(MusaConstants.SAVED_FONT) == "HentraxMusaElement-Regular"
+            updateViews(FormulaUtils.getChildKeysForTopParent(t, childKeysFont, isHentrax))
+
             isFirstClick = false
             isShiftMode = false
-            backspace.setImageDrawable(
+            binding.backspace.setImageDrawable(
                 ContextCompat.getDrawable(
                     applicationContext,
                     R.drawable.restart
@@ -443,47 +396,35 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
     }
 
     private fun processSecondClick(view: View, z: Boolean) {
-        isHentrax = mySharedPreference.getPreferences(MusaConstants.SAVED_FONT).equals("HentraxMusaElement-Regular")
-        var str: String
-        val str2: String
-        var indexOf = FormulaUtils.getSingleKeyboardButtonIds().indexOf(Integer.valueOf(view.id))
-        if (z || isShiftMode) {
-            indexOf += 27
-        }
+        isHentrax =
+            mySharedPreference.getPreferences(MusaConstants.SAVED_FONT) == "HentraxMusaElement-Regular"
+
+        val indexOf = FormulaUtils.getSingleKeyboardButtonIds()
+            .indexOf(view.id) + if (z || isShiftMode) 27 else 0
+
         val actualText = FormulaUtils.getOutput(t, indexOf, isHentrax).actualText
-        if (yauLongPressed && FormulaUtils.getSingleKeyboardButtonIds()
-                .indexOf(Integer.valueOf(view.id)) != 15 || addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()
-                .indexOf(Integer.valueOf(view.id)) == 17
-        ) {
-            str2 = Html.fromHtml("&#x200C;").toString()
-            yauLongPressed = false
-            addZWNJ = false
-            str = ""
-        } else if (!yauLongPressed || FormulaUtils.getSingleKeyboardButtonIds()
-                .indexOf(Integer.valueOf(view.id)) != 15
-        ) {
-            str2 = ""
-            str = str2
-        } else {
-            val obj = Html.fromHtml("&#x200C;").toString()
-            addZWNJ = false
-            yauLongPressed = false
-            str = obj
-            str2 = ""
+        val resultText = StringBuilder()
+
+        // Prepend Zero Width Non-Joiner if conditions are met
+        if ((yauLongPressed && indexOf != 15) || (addZWNJ && indexOf == 17)) {
+            resultText.append(Html.fromHtml("&#x200C;").toString())
         }
-        if (addZWNJ && FormulaUtils.getSingleKeyboardButtonIds()
-                .indexOf(Integer.valueOf(view.id)) == 15
-        ) {
-            str = Html.fromHtml("&#x200C;").toString()
-            addZWNJ = false
+        resultText.append(actualText)
+
+        if (addZWNJ && indexOf == 15) {
+            resultText.append(Html.fromHtml("&#x200C;").toString())
         }
-        val str3 = str2 + actualText + str
-        if ("" != str3) {
+
+        // Reset flags
+        yauLongPressed = false
+        addZWNJ = false
+
+        if (resultText.isNotEmpty()) {
             isFirstClick = true
             isShiftMode = false
-            keyOutput?.text = keyOutput!!.text.toString() + str3
+            binding.keyOutput.text.append(resultText.toString())
             updateViews(getParentKeyboard(parentKeysFont))
-            backspace.setImageDrawable(
+            binding.backspace.setImageDrawable(
                 ContextCompat.getDrawable(
                     applicationContext,
                     R.drawable.backspace
@@ -492,47 +433,63 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
         }
     }
 
+
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-    override fun onTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {
-        if (!backspaceHit && charSequence.toString() != "" && !isEnterHit && !isEscapeHit && !IsTabHit) {
-            if (NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning) {
-                sendData(charSequence[charSequence.length - 1].toString())
-            }
-            ic!!.setComposingText(charSequence[charSequence.length - 1].toString(), 1)
-            ic!!.finishComposingText()
-        } else if (isEnterHit) {
-            ic!!.setComposingText("\n", 1)
-            ic!!.finishComposingText()
-            if (NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning) {
-                sendData("⏎")
-            }
-            isEnterHit = false
-        } else if (IsTabHit) {
-            if (NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning) {
-                sendData("⇥")
-            }
-            ic!!.setComposingText("\t", 1)
-            ic!!.finishComposingText()
-            IsTabHit = false
-        } else if (isEscapeHit) {
-            ic!!.setComposingText("\u001b", 1)
-            ic!!.finishComposingText()
-            if (NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning) {
-                sendData("⎋")
-            }
-            isEscapeHit = false
-        } else if (backspaceHit && charSequence != "") {
-            if (TextUtils.isEmpty(ic!!.getSelectedText(0))) {
-                ic!!.deleteSurroundingText(1, 0)
-            } else {
-                ic!!.commitText("", 1)
-            }
-            if (NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning) {
-                sendData("⌫")
-            }
+    override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
+        when {
+            shouldHandleTextChange(charSequence) -> handleTextChange(charSequence)
+            isEnterHit -> handleEnterKey()
+            IsTabHit -> handleTab()
+            isEscapeHit -> handleEscape()
+            backspaceHit && charSequence.isNotEmpty() -> handleBackspaceKey()
         }
     }
+
+    private fun shouldHandleTextChange(charSequence: CharSequence): Boolean =
+        !backspaceHit && charSequence.isNotEmpty() && !isEnterHit && !isEscapeHit && !IsTabHit
+
+    private fun handleTextChange(charSequence: CharSequence) {
+        sendKey(charSequence.last().toString())
+        ic?.setComposingText(charSequence.last().toString(), 1)
+        ic?.finishComposingText()
+    }
+
+    private fun handleEnterKey() {
+        sendKey("\n")
+        ic?.setComposingText("\n", 1)
+        ic?.finishComposingText()
+        isEnterHit = false
+    }
+
+    private fun handleTab() {
+        sendKey("\t")
+        ic?.setComposingText("\t", 1)
+        ic?.finishComposingText()
+        IsTabHit = false
+    }
+
+    private fun handleEscape() {
+        sendKey("\u001b")
+        ic?.setComposingText("\u001b", 1)
+        ic?.finishComposingText()
+        isEscapeHit = false
+    }
+
+    private fun handleBackspaceKey() {
+        val hasSelectedText = !TextUtils.isEmpty(ic?.getSelectedText(0))
+        if (hasSelectedText) ic?.commitText("", 1) else ic?.deleteSurroundingText(1, 0)
+        sendKey("⌫")
+    }
+
+    private fun sendKey(key: String) {
+        if (isOperationAllowed()) {
+            sendData(key)
+        }
+    }
+
+    private fun isOperationAllowed(): Boolean =
+        NetworkCommunicationAsync.IsConnected && !PortraitModeKeypad.isFragmentRunning && !LandscapeModeKeypad.isFragmentRunning
 
     override fun afterTextChanged(p0: Editable?) {}
 
@@ -570,7 +527,7 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 arrayOfNulls(0)
             )
             Handler(Looper.getMainLooper()).postDelayed({
-                recyclerView.layoutManager!!.scrollToPosition(
+                binding.recyclerView.layoutManager!!.scrollToPosition(
                     mAdapter.itemCount - 1
                 )
             }, 50)
@@ -579,251 +536,109 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
 
 
     private fun otherKeyboards(view: View) {
-        if (numericWithin22) {
-            if (computerIconPos) {
-                var i = 0
-                while (i < FormulaUtils.getSingleKeyboardButtonIds().size) {
-                    if (FormulaUtils.getSingleKeyboardButtonIds()[i] != view.id) {
-                        i++
-                    } else if (i == 8) {
-                        buttonList[8].text = "⬒"
-                        buttonList[26].text = ""
-                        computerIconPos = true
-                        return
-                    } else if (i == 17) {
-                        numericWithin22 = false
-                        isFirstClick = true
-                        computerIconPos = false
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    } else if (i == 26) {
-                        buttonList[8].text = ""
-                        buttonList[26].text = "⬓"
-                        computerIconPos = false
-                        return
-                    } else {
-                        val textView = keyOutput!!
-                        textView.text = keyOutput!!.text.toString() + FormulaUtils.highDigitsMusa[i]
-                        return
-                    }
+        when {
+            numericWithin22 -> handleNumericWithin22(view)
+            shiftMode22 -> handleShiftMode22(view)
+            isFirstClick -> processFirstClick(view, false)
+            else -> processSecondClick(view, false)
+        }
+    }
+
+    private fun handleNumericWithin22(view: View) {
+        FormulaUtils.getSingleKeyboardButtonIds().indexOf(view.id).let { index ->
+            when (index) {
+                8 -> {
+                    setKeyMode(true, "⬒", "")
+                }
+
+                17 -> {
+                    numericWithin22 = false
+                    isFirstClick = true
+                    computerIconPos = false
+                    resetKeyboardState()
+                }
+
+                26 -> {
+                    setKeyMode(false, "", "⬓")
+                }
+
+                else -> {
+                    val additionalText = FormulaUtils.highDigitsMusa.getOrElse(index) { "" }
+                    appendText(additionalText)
                 }
             }
-            if (computerIconPos && view.id == R.id.parent_9) {
-                System.out.printf("nothing", *arrayOfNulls(0))
-            } else if (!computerIconPos && view.id == R.id.parent_27) {
-                System.out.printf("nothing", *arrayOfNulls(0))
-            } else if (!computerIconPos && view.id == R.id.parent_9) {
-                buttonList[8].text = "⬒"
-                buttonList[26].text = ""
-                computerIconPos = true
-            } else if (computerIconPos && view.id == R.id.parent_27) {
-                buttonList[8].text = ""
-                buttonList[26].text = "⬓"
-                computerIconPos = false
-            } else if (view.id == R.id.parent_18) {
+        }
+
+        when (view.id) {
+            binding.parent9.id -> if (computerIconPos) println("nothing")
+            binding.parent27.id -> if (!computerIconPos) println("nothing")
+            binding.parent18.id -> {
                 numericWithin22 = false
                 isFirstClick = true
-                updateViews(getParentKeyboard(parentKeysFont))
-                backspace.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        applicationContext,
-                        R.drawable.backspace
-                    )
-                )
-                shiftMode22 = false
-            } else {
-                for (i2 in FormulaUtils.getSingleKeyboardButtonIds().indices) {
-                    if (FormulaUtils.getSingleKeyboardButtonIds()[i2] == view.id) {
-                        val childKeysForTopParent = FormulaUtils.getChildKeysForTopParent(
-                            7,
-                            childKeysFont,
-                            isHentrax
-                        )
-                        val textView2 = keyOutput!!
-                        textView2.text =
-                            keyOutput!!.text.toString() + childKeysForTopParent!![i2]!!.actualText
-                    }
-                }
+                resetKeyboardState()
             }
-        } else if (shiftMode22) {
-            val id = view.id
-            if (id == R.id.parent_1) {
-                isEnterHit = true
-                val textView3 = keyOutput!!
-                textView3.text = keyOutput!!.text.toString() + "\n"
-                isFirstClick = true
-                updateViews(getParentKeyboard(parentKeysFont))
-                backspace.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        applicationContext,
-                        R.drawable.backspace
-                    )
-                )
-                shiftMode22 = false
-            } else if (id == R.id.parent_18) {
-                val textView4 = keyOutput!!
-                textView4.text = keyOutput!!.text.toString() + FormulaUtils.shiftCharacters[5]
-                isFirstClick = true
-                updateViews(getParentKeyboard(parentKeysFont))
-                backspace.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        applicationContext,
-                        R.drawable.backspace
-                    )
-                )
-                shiftMode22 = false
-            } else if (id != R.id.parent_2) {
-                when (id) {
-                    R.id.parent_27 -> {
-                        val textView5 = keyOutput!!
-                        textView5.text =
-                            keyOutput!!.text.toString() + FormulaUtils.shiftCharacters[6]
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_3 -> {
-                        isEscapeHit = true
-                        val textView6 = keyOutput!!
-                        textView6.text = keyOutput!!.text.toString() + "\u001b"
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_4 -> {
-                        IsTabHit = true
-                        isFirstClick = true
-                        val textView7 = keyOutput!!
-                        textView7.text = keyOutput!!.text.toString() + "\t"
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_5 -> {
-                        val textView8 = keyOutput!!
-                        textView8.text = keyOutput!!.text.toString() + "‌"
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_6 -> {
-                        val textView9 = keyOutput!!
-                        textView9.text = keyOutput!!.text.toString() + "‍"
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_7 -> {
-                        updateViews(FormulaUtils.getNumericCharacters(parentKeysFont))
-                        numericWithin22 = true
-                        isFirstClick = true
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        return
-                    }
-
-                    R.id.parent_8 -> {
-                        val textView10 = keyOutput!!
-                        textView10.text =
-                            keyOutput!!.text.toString() + FormulaUtils.shiftCharacters[3]
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    R.id.parent_9 -> {
-                        val textView11 = keyOutput!!
-                        textView11.text =
-                            keyOutput!!.text.toString() + FormulaUtils.shiftCharacters[4]
-                        isFirstClick = true
-                        updateViews(getParentKeyboard(parentKeysFont))
-                        backspace.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                applicationContext,
-                                R.drawable.backspace
-                            )
-                        )
-                        shiftMode22 = false
-                        return
-                    }
-
-                    else -> return
-                }
-            } else {
-                val textView12 = keyOutput!!
-                textView12.text = keyOutput!!.text.toString() + " "
-                isFirstClick = true
-                updateViews(getParentKeyboard(parentKeysFont))
-                backspace.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        applicationContext,
-                        R.drawable.backspace
-                    )
-                )
-                shiftMode22 = false
-            }
-        } else if (isFirstClick) {
-            processFirstClick(view, false)
-        } else {
-            processSecondClick(view, false)
         }
+    }
+
+    private fun handleShiftMode22(view: View) {
+        when (view.id) {
+            binding.parent1.id -> appendAndResetKeyboard("\n")
+            binding.parent18.id -> appendAndResetKeyboard(FormulaUtils.shiftCharacters[5])
+            binding.parent27.id -> appendAndResetKeyboard(FormulaUtils.shiftCharacters[6])
+            binding.parent3.id -> appendAndResetKeyboard("\u001b")
+            binding.parent4.id, binding.parent5.id, binding.parent6.id, binding.parent8.id, binding.parent9.id -> {
+                val charToAdd = when (view.id) {
+                    binding.parent4.id -> "\t"
+                    binding.parent5.id -> "‌"
+                    binding.parent6.id -> "‍"
+                    binding.parent8.id -> FormulaUtils.shiftCharacters[3]
+                    binding.parent9.id -> FormulaUtils.shiftCharacters[4]
+                    else -> ""
+                }
+                appendAndResetKeyboard(charToAdd)
+            }
+
+            binding.parent7.id -> {
+                updateViews(FormulaUtils.getNumericCharacters(parentKeysFont))
+                numericWithin22 = true
+                isFirstClick = true
+                binding.backspace.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        applicationContext,
+                        R.drawable.backspace
+                    )
+                )
+            }
+
+            else -> appendText(" ")
+        }
+    }
+
+    private fun resetKeyboardState() {
+        updateViews(getParentKeyboard(parentKeysFont))
+        binding.backspace.setImageDrawable(
+            ContextCompat.getDrawable(
+                applicationContext,
+                R.drawable.backspace
+            )
+        )
+        shiftMode22 = false
+    }
+
+    private fun setKeyMode(iconPos: Boolean, key8Text: String, key26Text: String) {
+        buttonList[8].text = key8Text
+        buttonList[26].text = key26Text
+        computerIconPos = iconPos
+    }
+
+    private fun appendText(text: String) {
+        binding.keyOutput.setText(StringBuilder(binding.keyOutput.text).append(text))
+    }
+
+    private fun appendAndResetKeyboard(text: String) {
+        appendText(text)
+        isFirstClick = true
+        resetKeyboardState()
     }
 
     private fun checkComputerIconPos() {
@@ -852,9 +667,14 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
                 InstantiateDatabase.getDatabaseInstance(it)!!.messageDao()
             ).execute()
         }
-        val textView = keyOutput
-        if (textView != null) {
-            textView.text = ""
-        }
+    }
+
+    override fun clearKeyboard() {
+        binding.keyOutput.setText("")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        setInstance(null)
     }
 }

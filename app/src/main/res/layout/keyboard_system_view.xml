@@ -208,7 +208,7 @@
                             android:textColor="#000000" />
 
                         <Button
-                            android:id="@+id/parent_19"
+                            android:id="@+id/parent_7"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="1dp"
@@ -349,7 +349,7 @@
             android:weightSum="9">
 
             <Button
-                android:id="@+id/parent_7"
+                android:id="@+id/parent_19"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="1dp"

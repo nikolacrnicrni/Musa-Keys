@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:background="@color/colorPrimaryDark" android:layout_width="match_parent" android:layout_height="match_parent">
-    <TextView android:textSize="22sp" android:textColor="@color/titleColor" android:gravity="center" android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10dp" android:layout_marginTop="150dp" android:layout_marginRight="10dp" android:text="By clicking on the button below the Musa Keys app will stop listening to your phone rotations."/>
-    <Button android:textSize="20sp" android:textStyle="bold" android:textColor="@color/keyContent" android:layout_gravity="center" android:id="@+id/unregister_broadcast_listener" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="100dp" android:text="Close clipboard mode"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:text="By clicking on the button below the Musa Keys app will stop listening to your phone rotations."
+        android:textColor="@color/titleColor"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/unregister_broadcast_listener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:text="Close clipboard mode"
+        android:textColor="@color/keyContent"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 </LinearLayout>

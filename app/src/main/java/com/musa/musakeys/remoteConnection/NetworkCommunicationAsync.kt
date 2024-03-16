@@ -7,15 +7,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.AsyncTask
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.Navigation.findNavController
 import com.musa.musakeys.R
-import com.musa.musakeys.ui.welcome.WelcomeMusaActivity
 import com.musa.musakeys.constants.MusaConstants
 import com.musa.musakeys.constants.SharedPreferenceEnum
+import com.musa.musakeys.ui.welcome.WelcomeMusaActivity
 import com.musa.musakeys.utility.PassKeyHelperUtil.getIpFromPassKey
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil.updateSharedPreferenceString
 import java.io.BufferedReader
@@ -139,15 +138,12 @@ class NetworkCommunicationAsync(
         }
         if (responseMessage.connectionResponse != null && responseMessage.messageError == null && responseMessage.connectionError == null) {
             if (responseMessage.isVersionMismatch) {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    builder = AlertDialog.Builder(context)
-                } else {
-                    builder = AlertDialog.Builder(context)
-                }
+                builder = AlertDialog.Builder(context)
                 builder!!.setTitle("Old Version")
                     .setMessage("Please download the latest version of the Android app and Server Agent")
-                    .setPositiveButton(17039379,
-                        DialogInterface.OnClickListener { dialogInterface, i -> dialogInterface.cancel() })
+                    .setPositiveButton(
+                        17039379
+                    ) { dialogInterface, _ -> dialogInterface.cancel() }
                     .setIcon(17301543)
                 val context2 = context
                 if (context2 is Activity) {
@@ -185,19 +181,15 @@ class NetworkCommunicationAsync(
                 IsConnected = false
             }
         } else if ("stop" != message) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                builder = AlertDialog.Builder(context, 16974374)
-            } else {
-                builder = AlertDialog.Builder(context)
-            }
+            builder = AlertDialog.Builder(context, 16974374)
             builder!!.setTitle(context.getString(R.string.error))
-                .setMessage(responseMessage.toString()).setPositiveButton(17039379,
-                    DialogInterface.OnClickListener { dialogInterface, i ->
-                        `lambda$onPostExecute$0$NetworkCommunicationAsync`(
-                            dialogInterface,
-                            i
-                        )
-                    }).setIcon(17301543)
+                .setMessage(responseMessage.toString()).setPositiveButton(
+                    17039379
+                ) { dialogInterface, _ ->
+                    networkCommunicationAsync(
+                        dialogInterface
+                    )
+                }.setIcon(17301543)
             val context6 = context
             if (context6 is Activity && !context6.isFinishing) {
                 builder!!.show()
@@ -205,10 +197,9 @@ class NetworkCommunicationAsync(
         }
     }
 
-    /* synthetic */   @SuppressLint("WrongConstant")
-    fun `lambda$onPostExecute$0$NetworkCommunicationAsync`(
-        dialogInterface: DialogInterface,
-        i: Int
+    @SuppressLint("WrongConstant")
+    fun networkCommunicationAsync(
+        dialogInterface: DialogInterface
     ) {
         if (!isConnectionRequest) {
             val context2 = context

@@ -31,9 +31,9 @@ class WelcomeMusaActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         val extras = intent.extras
-        val z = extras?.getBoolean(MusaConstants.BROADCAST_RECEIVER_INTENT) ?: false
+        val bri = extras?.getBoolean(MusaConstants.BROADCAST_RECEIVER_INTENT) ?: false
 
-        if (z) {
+        if (bri) {
             val intent = Intent(this, NavigationActivity::class.java)
             if (extras != null) {
                 intent.putExtra(MusaConstants.COPIED_TEXT, extras.getString(MusaConstants.COPIED_TEXT))
