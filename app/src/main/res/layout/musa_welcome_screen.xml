@@ -78,7 +78,7 @@
             android:layout_gravity="center"
             android:ellipsize="middle"
             android:layout_marginTop="8dp"
-            android:text="Version 25feb24"
+            android:text="Version 16mar24"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

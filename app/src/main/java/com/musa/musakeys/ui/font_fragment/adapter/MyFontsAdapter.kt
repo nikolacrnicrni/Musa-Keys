@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.musa.musakeys.R
@@ -38,6 +38,7 @@ class MyFontsAdapter(
             mySharedPreference = MySharedPreference(context)
             val textView = viewHolder.itemView.findViewById<View>(R.id.fontName) as TextView
             val textView2 = viewHolder.itemView.findViewById<View>(R.id.musaText) as TextView
+            val background = viewHolder.itemView.findViewById<View>(R.id.backgroundLayer) as ConstraintLayout
             val preferences = mySharedPreference!!.getPreferences(MusaConstants.FONTS_DOWNLOADED)
             if (preferences == "true") {
                 setDownloaded(true)
@@ -45,9 +46,11 @@ class MyFontsAdapter(
             if (mySharedPreference!!.getPreferences(MusaConstants.FONT_INDEX) == i.toString()) {
                 textView2.setTextColor(context.resources.getColor(R.color.titleColor))
                 textView.setTextColor(context.resources.getColor(R.color.titleColor))
+                background.setBackgroundColor(context.resources.getColor(R.color.light_yellow))
             } else {
                 textView.setTextColor(ViewCompat.MEASURED_STATE_MASK)
                 textView2.setTextColor(ViewCompat.MEASURED_STATE_MASK)
+                background.setBackgroundColor(context.resources.getColor(android.R.color.transparent))
             }
             val arrayList2: ArrayList<*> = ArrayList<Any?>(MusaConstants.mapOfFontUris.keys)
             val assets = context.assets

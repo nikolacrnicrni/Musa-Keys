@@ -39,7 +39,6 @@ import com.musa.musakeys.utility.FontSelector
 import com.musa.musakeys.utility.FontSizeManager
 import com.musa.musakeys.utility.FormulaUtils
 import com.musa.musakeys.utility.FormulaUtils.getParentKeyboard
-import com.musa.musakeys.utility.FormulaUtils.getShiftedParentKeys
 import com.musa.musakeys.utility.MySharedPreference
 import com.musa.musakeys.utility.SharedPreferenceHelperUtil
 
@@ -94,7 +93,17 @@ class KeyboardListener : InputMethodService(), View.OnClickListener, View.OnLong
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        updateFont()
         checkComputerIconPos()
+    }
+
+    private fun updateFont() {
+        parentKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
+        childKeysFont = FontSelector.getAppropriateFont(applicationContext)!!
+        buttonList.forEach { button ->
+            button.typeface = parentKeysFont
+        }
+        binding.keyOutput.typeface = parentKeysFont
     }
 
     override fun onCreateInputView(): View {
