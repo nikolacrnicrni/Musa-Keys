@@ -12,7 +12,7 @@ android {
         applicationId = "com.musa.musakeys"
         minSdk = 27
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -14,7 +14,7 @@ import com.musa.musakeys.constants.MusaConstants
 import com.musa.musakeys.ui.welcome.WelcomeMusaActivity
 
 class OrientationListenerRegistrationService : Service() {
-    private val receiver by lazy { OrientationChangeBroadcastReciever() }
+    private val receiver by lazy { OrientationChangeBroadcastReceiver() }
 
     override fun onBind(intent: Intent?): IBinder? = null
 

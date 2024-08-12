@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,24 +86,34 @@ class MusaPhoneChatInterfacePortrait : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        shwaReply.requestFocus()
-        Handler(Looper.getMainLooper()).postDelayed({ checkClipboard() }, 0)
+        if (isAdded) {
+            shwaReply.requestFocus()
+            Handler(Looper.getMainLooper()).postDelayed({ checkClipboard() }, 0)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && ::shwaReply.isInitialized) {
             switchToLandscapeMode()
         }
     }
 
+
     private fun switchToLandscapeMode() {
-        findNavController().popBackStack()
-        val bundle = Bundle().apply {
-            putString(MusaConstants.TEXT_FROM_PORTRAIT, shwaReply.text.toString())
+        if (::shwaReply.isInitialized) {
+            val navController = findNavController()
+            navController.popBackStack()
+            val bundle = Bundle().apply {
+                putString(MusaConstants.TEXT_FROM_PORTRAIT, shwaReply.text.toString())
+            }
+            navController.navigate(R.id.nav_musa_phone_landscape_mode, bundle)
+        } else {
+            // Handle case where shwaReply is not initialized
+            Log.e("SwitchToLandscapeMode", "Attempted to switch orientation before initialization")
         }
-        findNavController().navigate(R.id.nav_musa_phone_landscape_mode, bundle)
     }
+
 
     override fun onClick(view: View) {
         if (view.id == R.id.done) {
@@ -121,42 +132,49 @@ class MusaPhoneChatInterfacePortrait : Fragment(), View.OnClickListener {
     }
 
     private fun saveCopiedText(text: String) {
-        val clipboardManager =
-            requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboardManager.setPrimaryClip(ClipData.newPlainText("", text))
+        if (isAdded) {
+            val clipboardManager = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            clipboardManager?.setPrimaryClip(ClipData.newPlainText("", text))
+        }
     }
 
     private fun insertMessage(text: String, isReceived: Boolean) {
-        PersistablePreviousMessage().apply {
-            message = text
-            this.isReceived = isReceived
-        }.also { message ->
-            InstantiateDatabase.getDatabaseInstance(activity)?.let {
-                InsertEntityAsyncTask(
-                    requireActivity(),
-                    message,
-                    object : EntityPersistenceListener {
-                        override fun onEntityPersisted(
-                            persistablePreviousMessage: PersistablePreviousMessage?, id: Long
-                        ) {
-                            startBackgroundServiceAsRequired(requireActivity())
-                            if (!isReceived) shwaReply.setText("")
-                            KeyboardListener.getInstance()?.clearKeyboard()
-                            mAdapter.addData(persistablePreviousMessage)
-                        }
-
-                        override fun onFailureOccured(asyncResult: AsyncResult?) {
-                            asyncResult?.let {
-                                Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG).show()
+        if (isAdded) {
+            PersistablePreviousMessage().apply {
+                message = text
+                this.isReceived = isReceived
+            }.also { message ->
+                InstantiateDatabase.getDatabaseInstance(activity)?.let {
+                    InsertEntityAsyncTask(
+                        requireActivity(),
+                        message,
+                        object : EntityPersistenceListener {
+                            override fun onEntityPersisted(
+                                persistablePreviousMessage: PersistablePreviousMessage?, id: Long
+                            ) {
+                                if (isAdded) {
+                                    startBackgroundServiceAsRequired(activity!!)
+                                    if (!isReceived) shwaReply.setText("")
+                                    KeyboardListener.getInstance()?.clearKeyboard()
+                                    mAdapter.addData(persistablePreviousMessage)
+                                }
                             }
-                        }
 
-                    },
-                    it.messageDao()
-                ).execute(arrayOfNulls(0))
+                            override fun onFailureOccured(asyncResult: AsyncResult?) {
+                                if (isAdded) {
+                                    asyncResult?.let {
+                                        Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        },
+                        it.messageDao()
+                    ).execute(arrayOfNulls(0))
+                }
             }
         }
     }
+
 
     private fun scrollToBottom() {
         Handler(Looper.getMainLooper()).postDelayed({
